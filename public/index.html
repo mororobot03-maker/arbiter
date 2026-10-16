@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARBITER — 에덴-7</title>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- ============ 1. 입장 화면 ============ -->
+  <section id="entry" class="screen">
+    <div class="entry-box">
+      <h1 class="logo" data-text="ARBITER">ARBITER</h1>
+      <p class="sub">심사 도시 에덴-7. 심사가 끝나는 날, 가장 많이 살아남은 기업이 도시를 가진다.</p>
+      <div class="entry-cos" aria-label="5대 기업">
+        <img src="img/co/helios.png" alt="헬리오스" title="헬리오스 인더스트리" style="--c:#FF9A2E">
+        <img src="img/co/blackice.png" alt="블랙아이스" title="블랙아이스 시큐리티" style="--c:#5CE1FF">
+        <img src="img/co/redline.png" alt="레드라인" title="레드라인 PMC" style="--c:#FF3355">
+        <img src="img/co/neoncast.png" alt="네온캐스트" title="네온캐스트 미디어" style="--c:#FF3DD8">
+        <img src="img/co/orion.png" alt="오리온" title="오리온 파이낸셜" style="--c:#B57BFF">
+      </div>
+      <label>요원 이름 <input id="nameInput" maxlength="12" placeholder="최대 12자"></label>
+      <button id="btnCreate" class="primary">새 방 만들기</button>
+      <div class="join-row">
+        <input id="codeInput" maxlength="4" placeholder="방 코드">
+        <button id="btnJoin">입장</button>
+      </div>
+      <p id="entryError" class="error"></p>
+    </div>
+  </section>
+
+  <!-- ============ 2. 로비 ============ -->
+  <section id="lobby" class="screen hidden">
+    <aside id="avatarEditor" class="avatar-editor"></aside>
+    <div class="lobby-main">
+      <h2>대기실 <span class="code" id="lobbyCode"></span></h2>
+      <p class="sub left">방 코드를 친구에게 알려주세요. <span id="lobbyCount"></span></p>
+      <ul id="lobbyPlayers" class="lobby-list"></ul>
+      <div class="row">
+        <button id="btnStart" class="primary">게임 시작</button>
+        <button id="btnLeave">나가기</button>
+      </div>
+      <p id="lobbyHint" class="sub left"></p>
+      <div id="lobbySettings" class="lobby-settings"></div>
+      <button id="btnRulesLobby" class="rules-btn">❔ 규칙 요약 보기</button>
+    </div>
+    <aside class="lobby-chat" id="lobbyChatSlot"></aside>
+  </section>
+
+  <!-- ============ 3. 게임 화면 (스케치 1) ============
+       ┌ 로고 + 정보 바 ─────────────────┐┌ 돈 ───┐
+       │       플레이어들                 ││ 채팅  │
+       │     ( 타이머 다이얼 )            ││       │
+       │ 손패 부채꼴      ( 나 )          ││       │
+       └──────────────────────────────────┘└───────┘ -->
+  <section id="game" class="screen hidden">
+    <header id="infoBar" class="info-bar" title="눌러서 정보 수첩 열기">
+      <div id="coLogo" class="co-logo"></div>
+      <div class="info-slant">
+        <div id="infoText"></div>
+        <span id="nbBadge" class="nb-badge hidden"></span>
+      </div>
+    </header>
+    <div class="money-wrap"><button id="btnRules" class="rules-btn" title="규칙 요약">❔ 규칙</button></div>
+
+    <main id="stage" class="stage">
+      <div id="banner" class="banner"></div>
+
+      <div id="dial" class="dial">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <circle class="dial-track" cx="100" cy="100" r="86"></circle>
+          <circle id="dialArc" class="dial-arc" cx="100" cy="100" r="86"></circle>
+          <!-- 아비터의 눈: 홍채 고리가 숨 쉬고, 마우스/밤 사건 쪽을 바라보고, 가끔 깜빡인다 -->
+          <defs><radialGradient id="pupilGlow"><stop offset="0" stop-color="currentColor" stop-opacity=".28"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient></defs>
+          <g id="eye" class="eye">
+            <g id="eyeIris" class="eye-iris">
+              <circle class="pupil-glow" cx="100" cy="100" r="58" fill="url(#pupilGlow)"/>
+              <g class="iris-ticks"><line x1="100" y1="27" x2="100" y2="37" transform="rotate(0 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(15 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(30 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(45 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(60 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(75 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(90 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(105 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(120 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(135 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(150 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(165 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(180 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(195 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(210 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(225 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(240 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(255 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(270 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(285 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(300 100 100)"/><line x1="100" y1="27" x2="100" y2="37" transform="rotate(315 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(330 100 100)"/><line x1="100" y1="27" x2="100" y2="33" transform="rotate(345 100 100)"/></g>
+              <circle class="iris-ring r1" cx="100" cy="100" r="68"/>
+              <circle class="iris-ring r2" cx="100" cy="100" r="60"/>
+            </g>
+          </g>
+        </svg>
+        <div class="dial-text">
+          <div id="dialPhase"></div>
+          <div id="dialTime"></div>
+        </div>
+      </div>
+
+      <div id="seats"></div>
+      <div id="meSeat" class="me-seat"></div>
+      <!-- 내 지갑: 오른쪽 아래 -->
+      <div id="wallet" class="wallet"><div id="moneyBar" class="money-bar"></div></div>
+      <div id="centerBox" class="center-box hidden"></div>
+      <button id="newsPill" class="news-pill hidden" title="오늘 아침 뉴스와 어젯밤 내 정보 결과 다시 보기">📡 오늘 뉴스 · 내 정보 결과</button>
+      <div id="nightCaption" class="night-caption hidden"></div>
+
+      <!-- 손패 부채꼴 + 카드 사용 창 -->
+      <div id="fan" class="fan"></div>
+      <div id="popup" class="popup hidden">
+        <div id="abilityBox">
+          <h4 id="abilityTitle"></h4>
+          <div id="abilityBtns" class="ability-btns"></div>
+          <label id="pierceRow" class="pierce hidden"><input type="checkbox" id="pierceCheck"> <span id="pierceLabel"></span></label>
+        </div>
+        <div id="companyBox">
+          <h4 id="coBoxTitle"></h4>
+          <div class="co-btns">
+            <button id="btnResource" class="co-btn"></button>
+            <button id="btnTransferPick" class="co-btn"></button>
+            <button id="btnSpecial" class="co-btn special"></button>
+          </div>
+          <div id="newsBox" class="news-box hidden">
+            <button data-fake="attack">공격</button><button data-fake="defend">방어</button><button data-fake="money">돈</button><button data-fake="intel">정보</button>
+          </div>
+          <button id="btnCompanyClear" class="ghost-btn small">↩ 취소</button>
+        </div>
+        <button id="btnPopupClose" class="popup-x" aria-label="닫기">✕</button>
+      </div>
+
+
+
+      <!-- 카드 구매 턴 (스케치 2) — 무대만 덮고 채팅은 계속 보인다 -->
+      <div id="shop" class="shop hidden">
+        <div class="shop-top">
+          <div id="shopLogo" class="co-logo"></div>
+          <div class="shop-title">암시장 <span id="shopDay" class="muted"></span></div>
+          <div class="time-bar"><div id="shopTimeFill" class="time-fill"></div><span id="shopTime"></span></div>
+        </div>
+        <div class="shop-body">
+          <div id="auctionRow" class="auction-row"></div>
+          <div class="deck-col">
+            <button id="btnRandom" class="deck" title="랜덤 카드 · 두 번 눌러 구매">
+              <span class="deck-back"></span>
+              <span class="deck-q">?</span>
+              <span id="randomPrice" class="deck-price"></span>
+            </button>
+          </div>
+        </div>
+        <div class="shop-bottom">
+          <div class="shop-hand-wrap">
+            <div class="small muted" id="shopHandInfo"></div>
+            <div id="shopHand" class="shop-hand"></div>
+          </div>
+          <div class="shop-money">
+            <div id="shopMoney"></div>
+            <button id="btnShopReady" class="primary">구매 완료</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 손패 한도 초과 정리 -->
+      <div id="cleanup" class="cleanup hidden"></div>
+    </main>
+
+    <aside class="chat-col" id="chatAside"></aside>
+  </section>
+
+  <!-- 채팅 패널: 로비/게임 둘 다에서 쓰려고 따로 만들어 JS가 옮겨 붙인다 -->
+  <div id="chatPanel" class="chat hidden">
+    <div class="tabs" id="chatTabs"></div>
+    <div id="whisperBar" class="whisper-bar hidden">
+      <span class="wb-label">받는 사람</span><div id="whisperChips" class="whisper-chips"></div>
+    </div>
+    <ul id="chatLog" class="chat-log"></ul>
+    <form id="chatForm" class="chat-form">
+      <input id="chatInput" maxlength="300" autocomplete="off" placeholder="메시지 입력">
+      <button id="chatSend">전송</button>
+    </form>
+  </div>
+
+  <div id="endOverlay" class="overlay hidden"></div>
+  <div id="rulesOverlay" class="overlay hidden"></div>
+  <div id="reveal" class="reveal-screen hidden"></div>
+  <div id="flash" class="flash hidden"></div>
+  <div id="toasts" class="toasts"></div>
+
+  <!-- 소리 조절: 게임 중엔 규칙 버튼 옆으로 옮겨짐 -->
+  <div id="soundCtl" class="sound-ctl floating">
+    <button id="soundBtn" class="sound-btn" title="소리 설정">🔊</button>
+    <div id="soundPanel" class="sound-panel hidden">
+      <label>배경음악 <input id="volMusic" type="range" min="0" max="100"></label>
+      <label>효과음 <input id="volSfx" type="range" min="0" max="100"></label>
+      <label class="mute"><input id="soundMute" type="checkbox"> 전체 음소거</label>
+      <p class="muted small">첫 클릭부터 소리가 납니다.<br>모든 소리는 게임 안에서 합성 (저작권 걱정 없음)</p>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="audio.js"></script>
+  <script src="avatar.js"></script>
+  <script src="icons.js"></script>
+  <script src="client.js"></script>
+</body>
+</html>

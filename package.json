@@ -1,0 +1,21 @@
+{
+  "name": "arbiter",
+  "version": "1.0.0",
+  "description": "아비터 (ARBITER) — 사이버펑크 니편내편 텍스트 웹게임 MVP",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "cross-env FAST=1 MIN_PLAYERS=2 node server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "socket.io-client": "^4.8.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
